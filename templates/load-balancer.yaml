@@ -5,6 +5,10 @@ Parameters:
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
 
+  Scheme:
+    Type: String
+    Default: internal
+
 
 Resources:
   SecurityGroup:
@@ -21,6 +25,7 @@ Resources:
   Elb:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
+      Scheme: !Ref Scheme
       Subnets: !Ref Subnets
       SecurityGroups:
         - !Ref SecurityGroup
