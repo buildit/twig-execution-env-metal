@@ -59,12 +59,18 @@ Metadata:
 
 
 Resources:
+  ElbMarkerSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: !Sub ${AWS::StackName}-elbs
+      VpcId: !GetAtt Vpc.Outputs.VpcId
+
   Cluster:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/templates/ecs-cluster.yaml
       Parameters:
-        SourceSecurityGroup: !GetAtt ElbTwig.Outputs.SecurityGroup
+        ElbMarkerSecurityGroup: !Ref ElbMarkerSecurityGroup
         Subnets: !GetAtt Vpc.Outputs.PrivateSubnets
         VpcId: !GetAtt Vpc.Outputs.VpcId
         InstanceType: !Ref EcsClusterInstanceType
@@ -77,8 +83,10 @@ Resources:
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/templates/load-balancer.yaml
       Parameters:
-        Subnets: !GetAtt Vpc.Outputs.PublicSubnets
+        Name: !Sub ${AWS::StackName}-web
+        ElbMarkerSecurityGroup: !Ref ElbMarkerSecurityGroup
         VpcId: !GetAtt Vpc.Outputs.VpcId
+        Subnets: !GetAtt Vpc.Outputs.PublicSubnets
         Scheme: internet-facing
 
   ElbTwigApi:
@@ -86,9 +94,11 @@ Resources:
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/templates/load-balancer.yaml
       Parameters:
-        Subnets: !GetAtt Vpc.Outputs.PublicSubnets
+        Name: !Sub ${AWS::StackName}-api
+        ElbMarkerSecurityGroup: !Ref ElbMarkerSecurityGroup
         VpcId: !GetAtt Vpc.Outputs.VpcId
-        Scheme: internal
+        Subnets: !GetAtt Vpc.Outputs.PublicSubnets
+        Scheme: internet-facing
 
   Vpc:
     Type: AWS::CloudFormation::Stack
@@ -106,9 +116,18 @@ Resources:
 
 
 Outputs:
+  TwigCluster:
+    Description: Twig Cluster name.
+    Value: !GetAtt Cluster.Outputs.ClusterName
   TwigServiceUrl:
-    Description: The URL of twig.
+    Description: Twig's URL.
     Value: !GetAtt ElbTwig.Outputs.ServiceUrl
+  TwigTargetGroupArn:
+    Description: ARN of Twig ELB's Target Group (use in build stack).
+    Value: !GetAtt ElbTwig.Outputs.TargetGroup
   TwigApiServiceUrl:
-    Description: The URL of twig API.
+    Description: Twig-API's URL.
     Value: !GetAtt ElbTwigApi.Outputs.ServiceUrl
+  TwigApiTargetGroupArn:
+    Description: ARN of Twig API ELB's Target Group (use in build stack).
+    Value: !GetAtt ElbTwigApi.Outputs.TargetGroup

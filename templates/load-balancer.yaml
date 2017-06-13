@@ -9,6 +9,17 @@ Parameters:
     Type: String
     Default: internal
 
+  Name:
+    Type: String
+    Description: >
+      Explicit name for this ELB.  Makes it easier to recognize.  Trade-off is update requires replacement of the ELB.
+
+  ElbMarkerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: >
+      Security Group used to mark this ELB for use with the backing Cluster.
+
+
 
 Resources:
   SecurityGroup:
@@ -25,10 +36,12 @@ Resources:
   Elb:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
+      Name: !Ref Name
       Scheme: !Ref Scheme
       Subnets: !Ref Subnets
       SecurityGroups:
         - !Ref SecurityGroup
+        - !Ref ElbMarkerSecurityGroup
 
   ElbListener:
     Type: AWS::ElasticLoadBalancingV2::Listener

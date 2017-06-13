@@ -18,8 +18,10 @@ Parameters:
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
 
-  SourceSecurityGroup:
+  ElbMarkerSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
+    Description: >
+      Security Group used to allow ELB traffic to this Cluster.
 
   VpcId:
     Type: AWS::EC2::VPC::Id
@@ -80,7 +82,7 @@ Resources:
     Properties:
       GroupDescription: !Sub ${AWS::StackName}-hosts
       SecurityGroupIngress:
-        - SourceSecurityGroupId: !Ref SourceSecurityGroup
+        - SourceSecurityGroupId: !Ref ElbMarkerSecurityGroup
           IpProtocol: -1
       VpcId: !Ref VpcId
 
