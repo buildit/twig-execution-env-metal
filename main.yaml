@@ -29,13 +29,70 @@ Parameters:
 
   TemplateBucket:
     Type: String
-    Default: "twig-execution-env-metal"
+    Default: "your bucket name here"
     Description: >
-      Bucket in S3 where this and the supporting templates for your project were deployed (using ./bin/deploy).
+      Bucket in S3 where this and the supporting templates for your project were deployed (using ./bin/deployTemplates).
+
+  VpcCidr:
+    Type: String
+    Default: "10.215.0.0/16"
+    Description: >
+      CIDR for overall VPC.  Subnets below must be contained within this CIDR.
+
+  PubSubnet1Cidr:
+    Type: String
+    Default: "10.215.10.0/24"
+    Description: >
+      CIDR for public subnet 1.
+
+  PubSubnet2Cidr:
+    Type: String
+    Default: "10.215.20.0/24"
+    Description: >
+      CIDR for public subnet 2.
+
+  PubSubnet3Cidr:
+    Type: String
+    Default: "10.215.30.0/24"
+    Description: >
+      CIDR for public subnet 3.
+
+  PrivSubnet1Cidr:
+    Type: String
+    Default: "10.215.70.0/24"
+    Description: >
+      CIDR for private subnet 1.
+
+  PrivSubnet2Cidr:
+    Type: String
+    Default: "10.215.80.0/24"
+    Description: >
+      CIDR for private subnet 2.
+
+  PrivSubnet3Cidr:
+    Type: String
+    Default: "10.215.90.0/24"
+    Description: >
+      CIDR for private subnet 3.
+
 
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterLabels:
+      VpcCidr:
+        default: "VPC CIDR"
+      PubSubnet1Cidr:
+        default: "Public Subnet 1 CIDR"
+      PubSubnet2Cidr:
+        default: "Public Subnet 2 CIDR"
+      PubSubnet3Cidr:
+        default: "Public Subnet 3 CIDR"
+      PrivSubnet1Cidr:
+        default: "Private Subnet 1 CIDR"
+      PrivSubnet2Cidr:
+        default: "Private Subnet 2 CIDR"
+      PrivSubnet3Cidr:
+        default: "Private Subnet 3 CIDR"
       EcsClusterInstanceType:
         default: "Cluster Instance Type"
       EcsClusterMinSize:
@@ -46,9 +103,15 @@ Metadata:
         default: "Initial/desired size of Cluster"
     ParameterGroups:
       - Label:
-          default: Build/Deployment Pipeline Configuration
+          default: VPC Configuration
         Parameters:
-          - BuildComputeType
+          - VpcCidr
+          - PubSubnet1Cidr
+          - PubSubnet2Cidr
+          - PubSubnet3Cidr
+          - PrivSubnet1Cidr
+          - PrivSubnet2Cidr
+          - PrivSubnet3Cidr
       - Label:
           default: ECS Configuration
         Parameters:
@@ -106,26 +169,26 @@ Resources:
       TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/templates/vpc.yaml
       Parameters:
         Name: !Ref AWS::StackName
-        VpcCIDR: 10.215.0.0/16
-        PubSubnet1CIDR: 10.215.10.0/24
-        PubSubnet2CIDR: 10.215.20.0/24
-        PubSubnet3CIDR: 10.215.30.0/24
-        PrivSubnet1CIDR: 10.215.40.0/24
-        PrivSubnet2CIDR: 10.215.50.0/24
-        PrivSubnet3CIDR: 10.215.60.0/24
+        VpcCIDR: !Ref VpcCidr
+        PubSubnet1CIDR: !Ref PubSubnet1Cidr
+        PubSubnet2CIDR: !Ref PubSubnet2Cidr
+        PubSubnet3CIDR: !Ref PubSubnet3Cidr
+        PrivSubnet1CIDR: !Ref PrivSubnet1Cidr
+        PrivSubnet2CIDR: !Ref PrivSubnet2Cidr
+        PrivSubnet3CIDR: !Ref PrivSubnet3Cidr
 
 
 Outputs:
   TwigCluster:
     Description: Twig Cluster name.
     Value: !GetAtt Cluster.Outputs.ClusterName
-  TwigServiceUrl:
+  TwigWebUrl:
     Description: Twig's URL.
     Value: !GetAtt ElbTwig.Outputs.ServiceUrl
-  TwigTargetGroupArn:
+  TwigWebTargetGroupArn:
     Description: ARN of Twig ELB's Target Group (use in build stack).
     Value: !GetAtt ElbTwig.Outputs.TargetGroup
-  TwigApiServiceUrl:
+  TwigApiUrl:
     Description: Twig-API's URL.
     Value: !GetAtt ElbTwigApi.Outputs.ServiceUrl
   TwigApiTargetGroupArn:
