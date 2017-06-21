@@ -90,7 +90,7 @@ Outputs:
     Value: !Ref TargetGroup
 
   ServiceUrl:
-    Description: URL of the load balancer for the sample service.
+    Description: URL of the load balancer for the service or site.
     Value: !Sub http://${Elb.DNSName}
 
   SecurityGroup:
