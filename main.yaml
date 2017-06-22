@@ -151,6 +151,8 @@ Resources:
         VpcId: !GetAtt Vpc.Outputs.VpcId
         Subnets: !GetAtt Vpc.Outputs.PublicSubnets
         Scheme: internet-facing
+        ElbListenerPort: 80
+        TargetGroupServicePort: 80
 
   ElbTwigApi:
     Type: AWS::CloudFormation::Stack
@@ -162,6 +164,9 @@ Resources:
         VpcId: !GetAtt Vpc.Outputs.VpcId
         Subnets: !GetAtt Vpc.Outputs.PublicSubnets
         Scheme: internet-facing
+        ElbListenerPort: 80
+        TargetGroupServicePort: 3000
+        TargetGroupHealthCheckPath: /ping
 
   Vpc:
     Type: AWS::CloudFormation::Stack

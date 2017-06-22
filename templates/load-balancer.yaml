@@ -19,6 +19,27 @@ Parameters:
     Description: >
       Security Group used to mark this ELB for use with the backing Cluster.
 
+  ElbListenerPort:
+    Type: Number
+    Description: >
+      Port the ELB listens on.
+
+  TargetGroupServicePort:
+    Type: Number
+    Description: >
+      Port the load balancer uses when routing traffic to targets.
+
+  TargetGroupHealthCheckPath:
+    Type: String
+    Default: /
+    Description: >
+      URI path that the health check executes to determine whether the service is healthy.
+
+  TargetGroupHealthCheckProtocol:
+    Type: String
+    Default: HTTP
+    Description: >
+      Protocol used to determine whether the service is healthy.
 
 
 Resources:
@@ -47,7 +68,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       LoadBalancerArn: !Ref Elb
-      Port: 80
+      Port: !Ref ElbListenerPort
       Protocol: HTTP
       DefaultActions:
         - Type: forward
@@ -58,13 +79,13 @@ Resources:
     DependsOn: Elb
     Properties:
       VpcId: !Ref VpcId
-      Port: 80
+      Port: !Ref TargetGroupServicePort
       Protocol: HTTP
       Matcher:
         HttpCode: 200-299
       HealthCheckIntervalSeconds: 10
-      HealthCheckPath: /
-      HealthCheckProtocol: HTTP
+      HealthCheckPath: !Ref TargetGroupHealthCheckPath
+      HealthCheckProtocol: !Ref TargetGroupHealthCheckProtocol
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       TargetGroupAttributes:
