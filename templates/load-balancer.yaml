@@ -41,6 +41,26 @@ Parameters:
     Description: >
       Protocol used to determine whether the service is healthy.
 
+  Route53HostedZone:
+    Type: String
+    Default:  Z1P8DS3H3CPS28
+    Description: >
+      Zone to contain records for DNS mappings.
+
+  Route53DomainName:
+    Type: String
+    MinLength: 1
+    Default:  buildit.tools
+    Description: >
+      The domain name for the ELB.
+
+  Route53SubDomainName:
+    Type: String
+    MinLength: 1
+    Default:  todo
+    Description: >
+      The sub domain name for the ELB.
+
 
 Resources:
   SecurityGroup:
@@ -109,6 +129,10 @@ Resources:
 Outputs:
   TargetGroup:
     Value: !Ref TargetGroup
+
+  DNSName:
+    Description: DNS name of the load balancer for the service or site.
+    Value: !GetAtt Elb.DNSName
 
   ServiceUrl:
     Description: URL of the load balancer for the service or site.
