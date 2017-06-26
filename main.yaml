@@ -172,7 +172,7 @@ Resources:
       Properties:
         HostedZoneName: !Sub ${Route53DomainName}.
         Comment: DNS name for my instance.
-        Name: !Join ['', [mthomas-twig, ., !Ref Route53DomainName, .]]
+        Name: !Join ['', [mthomas-twig2, ., !Ref Route53DomainName, .]]
         Type: CNAME
         TTL: '300'
         ResourceRecords:
