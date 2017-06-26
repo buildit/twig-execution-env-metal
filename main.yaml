@@ -1,8 +1,13 @@
+AWSTemplateFormatVersion: "2010-09-09"
 Description: >
   This template creates a basic VPC for an ECS-based execution environment.
 
 
 Parameters:
+  ProjectName:
+    Description: Project name
+    Type: String
+
   EcsClusterInstanceType:
     Type: String
     Default: "t2.small"
@@ -172,7 +177,7 @@ Resources:
       Properties:
         HostedZoneName: !Sub ${Route53DomainName}.
         Comment: DNS name for my instance.
-        Name: !Join ['', [mthomas-twig2, ., !Ref Route53DomainName, .]]
+        Name: !Join ['', [!Ref ProjectName, ., !Ref Route53DomainName, .]]
         Type: CNAME
         TTL: '300'
         ResourceRecords:
@@ -198,7 +203,7 @@ Resources:
       Properties:
         HostedZoneName: !Sub ${Route53DomainName}.
         Comment: DNS name for my instance.
-        Name: !Join ['', [mthomas-twig-api, ., !Ref Route53DomainName, .]]
+        Name: !Join ['', [!Ref ProjectName, '-api', ., !Ref Route53DomainName, .]]
         Type: CNAME
         TTL: '300'
         ResourceRecords:
