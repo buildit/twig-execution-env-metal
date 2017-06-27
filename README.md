@@ -22,7 +22,7 @@ Copy settings from the template `.make.example` and save the file as `.make`:
 
 ```
 ENV = Environment name (tst|dev|stg|prd)
-KEY_NAME = Your EC2 SSH Key Name
+KEY_NAME = Your EC2 Key Pair name
 PROFILE = AWS CLI profile name
 PROJECT = Project name for this application
 REGION = AWS Region
