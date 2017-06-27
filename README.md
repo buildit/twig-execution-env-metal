@@ -15,8 +15,9 @@ To start your environment:
 
 Only depending locally on AWS CLI, and having credentials working.
 
-## Setup
+Ensure sure you have an EC2 Key Pair (https://console.aws.amazon.com/ec2/v2/home#KeyPairs:sort=keyName) in the region you're targeting.
 
+## Setup
 Copy settings from the template `.make.example` and save the file as `.make`:
 
 ```
