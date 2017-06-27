@@ -93,6 +93,27 @@ Parameters:
     Description: >
       The domain name for the ELBs.
 
+  DbAmiId:
+    Type: String
+    MinLength: 1
+    Default:  ami-bc1e34aa
+    Description: >
+      The AMI to use for the database instance (default is us-east-1).
+
+  DbSubnet:
+    Type: String
+    MinLength: 1
+    Default:  ami-bc1e34aa
+    Description: >
+      The subnet where the database should run.
+
+  DbInstanceType:
+    Type: String
+    MinLength: 1
+    Default:  t2.medium
+    Description: >
+      The type of EC2 instance on which the database should run.
+
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -137,6 +158,11 @@ Metadata:
           - EcsClusterMinSize
           - EcsClusterMaxSize
           - EcsClusterDesiredSize
+      - Label:
+          default: Database Configuration
+        Parameters:
+          - DbAmiId
+          - DbSubnet
 
 
 Resources:
@@ -158,6 +184,19 @@ Resources:
         MinClusterSize: !Ref EcsClusterMinSize
         MaxClusterSize: !Ref EcsClusterMaxSize
         DesiredClusterSize: !Ref EcsClusterDesiredSize
+
+
+  CouchDb:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/templates/couchdb-ami.yaml
+      Parameters:
+        AmiId: !Ref DbAmiId
+        InstanceType: !Ref DbInstanceType
+        SubnetId: !GetAtt Vpc.Outputs.PrivateSubnet1
+        AppDbAccessSgId: !GetAtt Cluster.Outputs.ClusterSecurityGroup
+        VpcId: !GetAtt Vpc.Outputs.VpcId
+
 
   ElbTwig:
     Type: AWS::CloudFormation::Stack

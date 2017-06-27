@@ -32,7 +32,6 @@ create: upload
 update: upload
 	aws cloudformation update-stack --stack-name "$(PROJECT)-$(ENV)-$(NAME_SUFFIX)" \
 		--template-body "file://main.yaml" \
-		--disable-rollback \
 		--capabilities CAPABILITY_NAMED_IAM \
 		--parameters \
 			"ParameterKey=TemplateBucket,ParameterValue=metalrig.$(NAME_SUFFIX)/$(PROJECT)/$(ENV)" \
@@ -53,6 +52,7 @@ status:
 
 ## Upload CF Templates to S3
 upload:
+	aws s3 cp templates/couchdb-ami.yaml s3://metalrig.$(NAME_SUFFIX)/$(PROJECT)/$(ENV)/templates/
 	aws s3 cp templates/ecs-cluster.yaml s3://metalrig.$(NAME_SUFFIX)/$(PROJECT)/$(ENV)/templates/
 	aws s3 cp templates/load-balancer.yaml s3://metalrig.$(NAME_SUFFIX)/$(PROJECT)/$(ENV)/templates/
 	aws s3 cp templates/vpc.yaml s3://metalrig.$(NAME_SUFFIX)/$(PROJECT)/$(ENV)/templates/

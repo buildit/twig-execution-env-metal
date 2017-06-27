@@ -198,5 +198,11 @@ Outputs:
     Value: !Join [ ",", [ !Ref PubSubnet1, !Ref PubSubnet2, !Ref PubSubnet3 ] ]
   PrivateSubnets:
     Value: !Join [ ",", [ !Ref PrivSubnet1, !Ref PrivSubnet2, !Ref PrivSubnet3 ] ]
+  PrivateSubnet1:
+    Value: !Ref PrivSubnet1
+  PrivateSubnet2:
+    Value: !Ref PrivSubnet2
+  PrivateSubnet3:
+    Value: !Ref PrivSubnet3
   VpcId:
     Value: !Ref VPC
