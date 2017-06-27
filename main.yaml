@@ -185,13 +185,13 @@ Resources:
         MaxClusterSize: !Ref EcsClusterMaxSize
         DesiredClusterSize: !Ref EcsClusterDesiredSize
 
-
   CouchDb:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/templates/couchdb-ami.yaml
       Parameters:
         AmiId: !Ref DbAmiId
+        Name: !Sub ${AWS::StackName}-couchdb
         InstanceType: !Ref DbInstanceType
         SubnetId: !GetAtt Vpc.Outputs.PrivateSubnet1
         AppDbAccessSgId: !GetAtt Cluster.Outputs.ClusterSecurityGroup
@@ -221,7 +221,6 @@ Resources:
         TTL: '300'
         ResourceRecords:
         - !GetAtt ElbTwig.Outputs.DNSName
-
 
   ElbTwigApi:
     Type: AWS::CloudFormation::Stack
@@ -269,13 +268,13 @@ Outputs:
     Value: !GetAtt Cluster.Outputs.ClusterName
   TwigWebUrl:
     Description: Twig's URL.
-    Value: !GetAtt ElbTwig.Outputs.ServiceUrl
+    Value: !Sub http://${ElbTwigDns}
   TwigWebTargetGroupArn:
     Description: ARN of Twig ELB's Target Group (use in build stack).
     Value: !GetAtt ElbTwig.Outputs.TargetGroup
   TwigApiUrl:
     Description: Twig-API's URL.
-    Value: !GetAtt ElbTwigApi.Outputs.ServiceUrl
+    Value: !Sub http://${ElbTwigApiDns}
   TwigApiTargetGroupArn:
     Description: ARN of Twig API ELB's Target Group (use in build stack).
     Value: !GetAtt ElbTwigApi.Outputs.TargetGroup

@@ -5,6 +5,11 @@ Description: >
 
 Parameters:
 
+  Name:
+    Type: String
+    Description: >
+      The name with which to tag resources.
+
   AmiId:
     Type: String
     MinLength: 1
@@ -56,13 +61,16 @@ Resources:
           ToPort: 5984
       VpcId: !Ref VpcId
 
-  Ec2Instance:
+  CouchEc2Instance:
     Type: "AWS::EC2::Instance"
     Properties:
       ImageId: !Ref AmiId
 #      KeyName:
 #        Ref: "KeyName"
       InstanceType: !Ref InstanceType
+      Tags:
+        - Key: Name
+          Value: !Ref Name
       NetworkInterfaces:
         - AssociatePublicIpAddress: "false"
           DeviceIndex: "0"
@@ -70,3 +78,13 @@ Resources:
             - Ref: "AppAccessSecurityGroup"
           SubnetId:
             Ref: "SubnetId"
+
+Outputs:
+  CouchDbPrivIpAddress:
+    Description: Private IP Address of CouchDb instance.
+    Value: !GetAtt CouchEc2Instance.PrivateIp
+
+  CouchDbAz:
+    Description: Private IP Address of CouchDb instance.
+    Value: !GetAtt CouchEc2Instance.AvailabilityZone
+
