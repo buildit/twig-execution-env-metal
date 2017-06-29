@@ -8,13 +8,13 @@ PROJECT ?= myapp
 REGION ?= us-east-1
 
 export AWS_PROFILE=$(PROFILE)
-export AWS_REGION=$(REGION)
+export AWS_DEFAULT_REGION=$(REGION)
 
 
 ## Ensure dependency S3 bucket is created
 # Creates S3 bucket for storing CF templates
 deps:
-	aws s3 mb s3://metalrig.$(NAME_SUFFIX)
+	aws s3 mb s3://metalrig.$(NAME_SUFFIX).$(REGION)
 
 
 ## Creates a new CF stack
